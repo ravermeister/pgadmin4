@@ -50,5 +50,5 @@ RUN chown pgadmin:pgadmin entrypoint.sh
 RUN chmod +x entrypoint.sh
 
 USER pgadmin
-ENTRYPOINT ["/usr/local/share/pgadmin/entrypoint.sh"]
 EXPOSE 8080
+ENTRYPOINT ["/usr/local/share/pgadmin/entrypoint.sh"]
