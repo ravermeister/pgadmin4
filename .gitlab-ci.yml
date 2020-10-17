@@ -1,7 +1,9 @@
+stages:
+  - build
+
 .imgjob:
   before_script:
     - echo -n "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY_SERVER"
-    - export BUILD_DATE=$(date +%Y-%m-%d.%H%M)
     - export CI_IMAGE="ravermeister/pgadmin4"
     - export PGADMIN_VERSION=$(cat ./VERSION)
   image: docker:stable
@@ -21,13 +23,6 @@ build-release:
       -t "$CI_IMAGE:$PGADMIN_VERSION" --build-arg PGADMIN_VERSION .
     - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
     - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:latest"
-  only:
-    - master
-
-publish-release:
-  stage: deploy
-  extends: .imgjob
-  script:
     - docker push "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
     - docker push "$CI_REGISTRY_IMAGE:latest"
   only:
@@ -44,13 +39,6 @@ build-develop:
       -t "$CI_IMAGE:$PGADMIN_VERSION" --build-arg PGADMIN_VERSION .
     - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
     - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
-  only:
-    - develop
-
-publish-develop:
-  stage: deploy
-  extends: .imgjob
-  script:
     - docker push "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
     - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
   only:
