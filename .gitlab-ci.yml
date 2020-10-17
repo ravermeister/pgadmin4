@@ -1,19 +1,26 @@
-before_script:
-  - echo -n "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY_SERVER"
-  - export GIT_COMMIT_DATE=$(git log -1 --format=%cd --date=format:%Y-%m-%d.%H%M)
-  - export BUILD_DATE=$(date +%Y-%m-%d.%H%M)
-  - export CI_IMAGE="ravermeister/pgadmin4"
-  - export PGADMIN_VERSION=$(cat ./VERSION)
-
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - cachedir/
 
-build-release:
-  stage: build
+.imgjob:
+  before_script:
+    - echo -n "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY_SERVER"
+    - export GIT_COMMIT_DATE=$(git log -1 --format=%cd --date=format:%Y-%m-%d.%H%M)
+    - export BUILD_DATE=$(date +%Y-%m-%d.%H%M)
+    - export CI_IMAGE="ravermeister/pgadmin4"
+    - export PGADMIN_VERSION=$(cat ./VERSION)
+  image: docker:stable
+  services:
+    - docker:stable-dind
+  variables:
+    DOCKER_DRIVER: overlay2
   tags:
     - gitlab-org-docker
+
+build-release:
+  stage: build
+  extends: .imgjob
   script:
     - rm -rf cachedir
     - mkdir -p cachedir
@@ -29,8 +36,7 @@ build-release:
 
 publish-release:
   stage: deploy
-  tags:
-    - gitlab-org-docker
+  extends: .imgjob
   script:
     - export BUILD_DATE=$(cat cachedir/build_date)
     - export GIT_COMMIT_DATE=$(cat cachedir/git_commit_date)
