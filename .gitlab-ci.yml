@@ -49,9 +49,7 @@ publish-release:
 
 build-develop:
   stage: build
-  tags:
-    - arm64
-    - shell
+  extends: .imgjob
   script:
     - rm -rf cachedir
     - mkdir -p cachedir
@@ -67,8 +65,7 @@ build-develop:
 
 publish-develop:
   stage: deploy
-  tags:
-    - gitlab-org-docker
+  extends: .imgjob
   script:
     - export BUILD_DATE=$(cat cachedir/build_date)
     - export GIT_COMMIT_DATE=$(cat cachedir/git_commit_date)
