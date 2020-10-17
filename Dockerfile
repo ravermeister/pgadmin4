@@ -11,7 +11,6 @@ ENV LANG="C.UTF-8"
 ENV TERM="xterm"
 SHELL ["/bin/bash", "-c"]
 
-
 RUN apt-get -yq update &&\
  apt-get -y install apt-utils &&\
  apt-get -y install ssh gcc\
@@ -42,9 +41,9 @@ RUN source pgadmin4/bin/activate &&\
  pip install gunicorn &&\
  pip install "$PGADMIN_DOWNLOAD_URL"
 
+USER root
 COPY config_local.py pgadmin4/lib/python3.9/site-packages/pgadmin4/
 COPY entrypoint.sh entrypoint.sh
-USER root
 RUN chown pgadmin:pgadmin pgadmin4/lib/python3.9/site-packages/pgadmin4/config_local.py
 RUN chown pgadmin:pgadmin entrypoint.sh
 RUN chmod +x entrypoint.sh
