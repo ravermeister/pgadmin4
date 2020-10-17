@@ -1,7 +1,3 @@
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - cachedir/
 .imgjob:
   before_script:
     - echo -n "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY_SERVER"
@@ -20,15 +16,11 @@ build-release:
   stage: build
   extends: .imgjob
   script:
-    - rm -rf cachedir
-    - mkdir -p cachedir
-    - echo -n $BUILD_DATE >cachedir/build_date
-    - echo -n $GIT_COMMIT_DATE >cachedir/git_commit_date
     - >
       docker build --pull --no-cache --force-rm --compress
       -t "$CI_IMAGE:$BUILD_DATE" --build-arg PGADMIN_VERSION .
-    - docker tag "$CI_IMAGE:$BUILD_DATE" "$CI_REGISTRY_IMAGE:$BUILD_DATE"
-    - docker tag "$CI_IMAGE:$BUILD_DATE" "$CI_REGISTRY_IMAGE:latest"
+    - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
+    - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:latest"
   only:
     - master
 
@@ -36,9 +28,7 @@ publish-release:
   stage: deploy
   extends: .imgjob
   script:
-    - export BUILD_DATE=$(cat cachedir/build_date)
-    - export GIT_COMMIT_DATE=$(cat cachedir/git_commit_date)
-    - docker push "$CI_REGISTRY_IMAGE:$BUILD_DATE"
+    - docker push "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
     - docker push "$CI_REGISTRY_IMAGE:latest"
   only:
     - master
@@ -49,15 +39,11 @@ build-develop:
   stage: build
   extends: .imgjob
   script:
-    - rm -rf cachedir
-    - mkdir -p cachedir
-    - echo -n $BUILD_DATE >cachedir/build_date
-    - echo -n $GIT_COMMIT_DATE >cachedir/git_commit_date
     - >
       docker build --pull --no-cache --force-rm --compress
       -t "$CI_IMAGE:$BUILD_DATE" --build-arg PGADMIN_VERSION .
-    - docker tag "$CI_IMAGE:$BUILD_DATE" "$CI_REGISTRY_IMAGE:$BUILD_DATE"
-    - docker tag "$CI_IMAGE:$BUILD_DATE" "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+    - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
+    - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
   only:
     - develop
 
@@ -65,9 +51,7 @@ publish-develop:
   stage: deploy
   extends: .imgjob
   script:
-    - export BUILD_DATE=$(cat cachedir/build_date)
-    - export GIT_COMMIT_DATE=$(cat cachedir/git_commit_date)
-    - docker push "$CI_REGISTRY_IMAGE:$BUILD_DATE"
+    - docker push "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
     - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
   only:
     - develop
