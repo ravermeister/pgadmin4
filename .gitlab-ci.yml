@@ -1,0 +1,74 @@
+before_script:
+  - echo -n "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY_SERVER"
+  - export GIT_COMMIT_DATE=$(git log -1 --format=%cd --date=format:%Y-%m-%d.%H%M)
+  - export BUILD_DATE=$(date +%Y-%m-%d.%H%M)
+  - export CI_IMAGE="ravermeister/pgadmin4"
+  - export PGADMIN_VERSION=$(cat ./VERSION)
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - cachedir/
+
+build-release:
+  stage: build
+  tags:
+    - gitlab-org-docker
+  script:
+    - rm -rf cachedir
+    - mkdir -p cachedir
+    - echo -n $BUILD_DATE >cachedir/build_date
+    - echo -n $GIT_COMMIT_DATE >cachedir/git_commit_date
+    - >
+      docker build --pull --no-cache --force-rm --compress
+      -t "$CI_IMAGE:$BUILD_DATE" --build-arg PGADMIN_VERSION .
+    - docker tag "$CI_IMAGE:$BUILD_DATE" "$CI_REGISTRY_IMAGE:$BUILD_DATE"
+    - docker tag "$CI_IMAGE:$BUILD_DATE" "$CI_REGISTRY_IMAGE:latest"
+  only:
+    - master
+
+publish-release:
+  stage: deploy
+  tags:
+    - gitlab-org-docker
+  script:
+    - export BUILD_DATE=$(cat cachedir/build_date)
+    - export GIT_COMMIT_DATE=$(cat cachedir/git_commit_date)
+    - docker push "$CI_REGISTRY_IMAGE:$BUILD_DATE"
+    - docker push "$CI_REGISTRY_IMAGE:latest"
+  only:
+    - master
+
+###########################
+
+build-develop:
+  stage: build
+  tags:
+    - arm64
+    - shell
+  script:
+    - rm -rf cachedir
+    - mkdir -p cachedir
+    - echo -n $BUILD_DATE >cachedir/build_date
+    - echo -n $GIT_COMMIT_DATE >cachedir/git_commit_date
+    - >
+      docker build --pull --no-cache --force-rm --compress
+      -t "$CI_IMAGE:$BUILD_DATE" --build-arg PGADMIN_VERSION .
+    - docker tag "$CI_IMAGE:$BUILD_DATE" "$CI_REGISTRY_IMAGE:$BUILD_DATE"
+    - docker tag "$CI_IMAGE:$BUILD_DATE" "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  only:
+    - develop
+
+publish-develop:
+  stage: deploy
+  tags:
+    - gitlab-org-docker
+  script:
+    - export BUILD_DATE=$(cat cachedir/build_date)
+    - export GIT_COMMIT_DATE=$(cat cachedir/git_commit_date)
+    - docker push "$CI_REGISTRY_IMAGE:$BUILD_DATE"
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  only:
+    - develop
+
+###########################
