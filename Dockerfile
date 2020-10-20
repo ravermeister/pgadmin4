@@ -39,6 +39,7 @@ WORKDIR /usr/local/share/pgadmin
 USER pgadmin
 RUN python3 -m venv pgadmin4
 RUN source pgadmin4/bin/activate &&\
+ python3 -m pip install --upgrade pip &&\
  pip install wheel &&\
  pip install gunicorn &&\
  pip install "$PGADMIN_DOWNLOAD_URL"
