@@ -6,6 +6,8 @@ stages:
     - echo -n "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY_SERVER"
     - export CI_IMAGE="ravermeister/pgadmin4"
     - export PGADMIN_VERSION=$(cat ./VERSION)
+  after_script:
+    - curl -X POST https://hooks.microbadger.com/images/ravermeister/pgadmin4/4e8KBc0HS3NVw_vwBu7ReIgW-ro=
   image: docker:stable
   services:
     - docker:stable-dind
