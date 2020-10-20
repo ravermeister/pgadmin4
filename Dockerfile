@@ -6,6 +6,8 @@ ARG PGADMIN_VERSION
 ENV PGADMIN_DOWNLOAD_URL="https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v$PGADMIN_VERSION/pip/pgadmin4-$PGADMIN_VERSION-py3-none-any.whl"
 ENV PGADMIN_SETUP_EMAIL="info@rimkus.it"
 ENV PGADMIN_SETUP_PASSWORD="changeme"
+ENV SMTP_HOST=""
+ENV SMTP_PORT=""
 ENV DEBIAN_FRONTEND="noninteractive"
 ENV LANG="C.UTF-8"
 ENV TERM="xterm"
