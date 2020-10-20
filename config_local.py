@@ -15,3 +15,5 @@ MAIL_USE_TLS = os.getenv('SMTP_TLS', False)
 MAIL_USERNAME = os.getenv('SMTP_USER', '')
 MAIL_PASSWORD = os.getenv('SMTP_PASSWORD', '')
 MAIL_DEBUG = os.getenv('SMTP_DEBUG', False)
+
+SECURITY_EMAIL_SENDER = os.getenv('SMTP_MAIL_SENDER', 'no-reply@localhost')
