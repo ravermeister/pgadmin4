@@ -8,7 +8,7 @@ stages:
     - export PGADMIN_VERSION=$(cat ./VERSION)
     - apk add --update curl && rm -rf /var/cache/apk/*
   after_script:
-    - curl -X POST https://hooks.microbadger.com/images/ravermeister/pgadmin4/4e8KBc0HS3NVw_vwBu7ReIgW-ro=
+    - curl -sX POST https://hooks.microbadger.com/images/ravermeister/pgadmin4/4e8KBc0HS3NVw_vwBu7ReIgW-ro=
   image: docker:stable
   services:
     - docker:stable-dind
