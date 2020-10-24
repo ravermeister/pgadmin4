@@ -9,7 +9,7 @@ docker pull ravermeister/pgadmin4
 docker run -p 8080:8080 \
 -e SMTP_HOST="localhost" \
 -e SMTP_PORT=25 \
--e SMTP_MAIL_SENDER="no-reply@localhost"
+-e SMTP_MAIL_SENDER="no-reply@localhost" \
 ravermeister/pgadmin4
 ```
 Then go to URL http://localhost:8080, the default admin user is:
