@@ -16,7 +16,7 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get -yq update &&\
  apt-get -y install apt-utils &&\
  apt-get -y install ssh gcc\
- postgresql-client python3-dev
+ postgresql-client python3-dev libkrb5-dev
 # postgresql-server-dev-all
 
 RUN mkdir /usr/local/share/pgadmin
