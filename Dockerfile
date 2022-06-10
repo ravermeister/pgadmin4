@@ -20,26 +20,23 @@ RUN apt-get -yq update &&\
  sqlite3
 # postgresql-server-dev-all
 
-RUN mkdir /usr/local/share/pgadmin
-RUN mkdir /var/lib/pgadmin
-RUN mkdir /var/log/pgadmin
-
-RUN addgroup --system pgadmin
-RUN adduser pgadmin\
+RUN mkdir /usr/local/share/pgadmin /var/lib/pgadmin /var/log/pgadmin &&\
+ addgroup --system pgadmin &&\
+ adduser pgadmin\
  --home /usr/local/share/pgadmin\
  --shell /bin/bash\
  --ingroup pgadmin\
  --no-create-home\
  --system
-RUN chown -R pgadmin:pgadmin /usr/local/share/pgadmin
-RUN chown -R pgadmin:pgadmin /var/lib/pgadmin
-RUN chown -R pgadmin:pgadmin /var/log/pgadmin
+
+RUN chown -R pgadmin:pgadmin /usr/local/share/pgadmin /var/lib/pgadmin /var/log/pgadmin &&\
+ chmod u+rwx /usr/local/share/pgadmin /var/lib/pgadmin /var/log/pgadmin
 
 WORKDIR /usr/local/share/pgadmin
 
 USER pgadmin
-RUN python3 -m venv pgadmin4
-RUN source pgadmin4/bin/activate &&\
+RUN python3 -m venv pgadmin4 &&\
+ source pgadmin4/bin/activate &&\
  python3 -m pip install --upgrade pip &&\
  pip install wheel &&\
  pip install gunicorn &&\
@@ -48,9 +45,8 @@ RUN source pgadmin4/bin/activate &&\
 USER root
 COPY config_local.py pgadmin4/lib/python3.9/site-packages/pgadmin4/
 COPY entrypoint.sh entrypoint.sh
-RUN chown pgadmin:pgadmin pgadmin4/lib/python3.9/site-packages/pgadmin4/config_local.py
-RUN chown pgadmin:pgadmin entrypoint.sh
-RUN chmod +x entrypoint.sh
+RUN chown pgadmin:pgadmin pgadmin4/lib/python3.9/site-packages/pgadmin4/config_local.py entrypoint.sh &&\
+ chmod +x entrypoint.sh
 
 USER pgadmin
 EXPOSE 8080
