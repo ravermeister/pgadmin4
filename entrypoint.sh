@@ -1,8 +1,13 @@
 #!/bin/bash
 cd "$HOME" || exit 1
-source pgadmin4/bin/activate
+source .venv/bin/activate
 gunicorn  --bind 0.0.0.0:8080 \
           --workers=1 \
           --threads=25 \
-          --chdir pgadmin4/lib/python3.9/site-packages/pgadmin4 \
-          pgAdmin4:app
+          --chdir .venv/lib/python3.9/site-packages/pgadmin4 \
+          pgAdmin4:app && \
+gunicorn  --bind 0.0.0.0:7080 \
+          --workers=1 \
+          --threads=4 \
+          --chdir .venv/lib/python3.9/site-packages/pgbackup \
+          pgbackup:app

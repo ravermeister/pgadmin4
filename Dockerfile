@@ -35,19 +35,21 @@ RUN chown -R pgadmin:pgadmin /usr/local/share/pgadmin /var/lib/pgadmin /var/log/
 WORKDIR /usr/local/share/pgadmin
 
 USER pgadmin
-RUN python3 -m venv pgadmin4 &&\
- source pgadmin4/bin/activate &&\
+RUN python3 -m venv .venv &&\
+ source .venv/bin/activate &&\
  python3 -m pip install --upgrade pip &&\
- pip install wheel &&\
- pip install gunicorn &&\
- pip install "$PGADMIN_DOWNLOAD_URL"
+ pip install wheel gunicorn flask &&\
+ pip install "$PGADMIN_DOWNLOAD_URL" &&\
+ mkdir -p .venv/lib/python3.9/site-packages/pgbackup 
+COPY pgbackup.py .venv/lib/python3.9/site-packages/pgbackup/
 
 USER root
-COPY config_local.py pgadmin4/lib/python3.9/site-packages/pgadmin4/
+COPY config_local.py .venv/lib/python3.9/site-packages/pgadmin4/
 COPY entrypoint.sh entrypoint.sh
-RUN chown pgadmin:pgadmin pgadmin4/lib/python3.9/site-packages/pgadmin4/config_local.py entrypoint.sh &&\
+RUN chown pgadmin:pgadmin .venv/lib/python3.9/site-packages/pgadmin4/config_local.py entrypoint.sh &&\
  chmod +x entrypoint.sh
 
 USER pgadmin
 EXPOSE 8080
+EXPOSE 7080
 ENTRYPOINT ["/usr/local/share/pgadmin/entrypoint.sh"]
