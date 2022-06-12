@@ -8,6 +8,7 @@ ENV PGADMIN_SETUP_EMAIL="info@rimkus.it"
 ENV PGADMIN_SETUP_PASSWORD="changeme"
 ENV SMTP_HOST=""
 ENV SMTP_PORT=""
+ENV PGBACKUP_PASSWORD="changeme"
 ENV DEBIAN_FRONTEND="noninteractive"
 ENV LANG="C.UTF-8"
 ENV TERM="xterm"
@@ -51,5 +52,5 @@ RUN chown pgadmin:pgadmin .venv/lib/python3.9/site-packages/pgadmin4/config_loca
 
 USER pgadmin
 EXPOSE 8080
-EXPOSE 7080
+EXPOSE 8081
 ENTRYPOINT ["/usr/local/share/pgadmin/entrypoint.sh"]

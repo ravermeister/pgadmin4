@@ -77,12 +77,12 @@ def restore_sql():
 
 
 def validate_password(params):
-    if 'pgbackup_password' not in os.environ:
+    if 'PGBACKUP_PASSWORD' not in os.environ:
         return False
     if 'password' not in params:
         return False
 
-    return params['password'] == os.environ['pgbackup_password']
+    return params['password'] == os.environ['PGBACKUP_PASSWORD']
 
 
 if __name__ == '__main__':
