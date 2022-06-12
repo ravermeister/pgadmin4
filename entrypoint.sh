@@ -1,6 +1,6 @@
 #!/bin/bash
 cd "$HOME" || exit 1
-source .venv/bin/activate
+source pg_venv/bin/activate
 gunicorn  -D \
           --bind 0.0.0.0:8080 \
           --workers=1 \
