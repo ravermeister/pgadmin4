@@ -7,7 +7,7 @@ It uses [gunicorn](https://gunicorn.org/) to start the Instance and listens on `
 (the environment variables are optional) execute:
 ```bash
 docker pull ravermeister/pgadmin4
-docker run -p 8080:8080 \
+docker run -p 8080:8080 -p 8081:8081 \
 -e SMTP_HOST="localhost" \
 -e SMTP_PORT=25 \
 -e SMTP_MAIL_SENDER="no-reply@localhost" \
