@@ -7,7 +7,7 @@ from io import BytesIO
 
 app = Flask(__name__)
 
-settings_db = '/home/raver/pgadmin4.db'
+settings_db = '/var/lib/pgadmin/pgadmin4.db'
 
 
 @app.route('/')
