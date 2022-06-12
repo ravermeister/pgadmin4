@@ -17,7 +17,7 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get -yq update \
  && apt-get -y install apt-utils \
  && apt-get -y install ssh gcc \
- postgresql-client python3-dev libkrb5-dev sqlite3 \
+ postgresql-client python3-dev libkrb5-dev sqlite3 curl \
  # postgresql-server-dev-all
  # clean apt cache
  && apt-get clean \
@@ -62,3 +62,4 @@ USER pgadmin
 EXPOSE 8080
 EXPOSE 8081
 ENTRYPOINT ["/usr/local/share/pgadmin/entrypoint.sh"]
+HEALTHCHECK CMD curl -f http://localhost:8080 && curl -f http://localhost:8081 || exit 1
