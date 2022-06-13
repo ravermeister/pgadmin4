@@ -47,7 +47,7 @@ USER pgadmin
 RUN python3 -m venv pg_venv &&\
  source pg_venv/bin/activate &&\
  python3 -m pip install --upgrade pip &&\
- pip install wheel gunicorn flask &&\
+ pip install wheel gunicorn flask psutil &&\
  pip install "$PGADMIN_DOWNLOAD_URL" &&\
  mkdir -p pg_venv/lib/python3.9/site-packages/pgbackup 
 COPY pgbackup.py pg_venv/lib/python3.9/site-packages/pgbackup/
