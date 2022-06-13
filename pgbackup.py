@@ -24,69 +24,65 @@ def usage():  # put application's code here
 @app.route('/backup/file', methods=['GET'])
 def backup_file():
     validate = validate_password(request.args)
-    if validate['status']:
-        return send_file(
-            path_or_file=settings_db,
-            as_attachment=True
-        )
-    else:
+    if not validate['status']:
         return validate['message']
+    return send_file(
+        path_or_file=settings_db,
+        as_attachment=True
+    )
 
 
 @app.route('/backup/sql', methods=['GET'])
 def backup_sql():
     validate = validate_password(request.args)
-    if validate['status']:
-        sql_dump = subprocess.check_output(['sqlite3', settings_db, '.dump'])
-        file_buf = BytesIO()
-        file_buf.write(sql_dump)
-        file_buf.seek(0)
-        return send_file(
-            file_buf,
-            as_attachment=True,
-            attachment_filename='pgadmin4_settings.sql',
-            mimetype='text/plain'
-        )
-    else:
+    if not validate['status']:
         return validate['message']
+    sql_dump = subprocess.check_output(['sqlite3', settings_db, '.dump'])
+    file_buf = BytesIO()
+    file_buf.write(sql_dump)
+    file_buf.seek(0)
+    return send_file(
+        file_buf,
+        as_attachment=True,
+        attachment_filename='pgadmin4_settings.sql',
+        mimetype='text/plain'
+    )
 
 
 @app.route('/restore/file', methods=['POST'])
 def restore_file():
     validate = validate_password(request.args)
-    if validate['status']:
-        if 'settings_db' in request.files:
-            db_file = request.files['settings_db']
-            db_file.save(settings_db)
-            reload_gunicorn()
-            return 'restore via db successful'
-        else:
-            return "no settings db provided"
-    else:
+    if not validate['status']:
         return validate['message']
+    if 'settings_db' in request.files:
+        db_file = request.files['settings_db']
+        db_file.save(settings_db)
+        reload_gunicorn()
+        return 'restore via db successful'
+    else:
+        return "no settings db provided"
 
 
 @app.route('/restore/sql', methods=['POST'])
 def restore_sql():
     validate = validate_password(request.args)
-    if validate['status']:
-        if 'settings_sql' in request.files:
-            db_sql = request.files['settings_sql']
-            sql_data = db_sql.read()
-            os.remove(settings_db)
-            sqlite3_cmd = subprocess.Popen(['sqlite3', settings_db], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-            sqlite3_cmd.communicate(input=sql_data)
-            reload_gunicorn()
-            return "restore via sql successful"
-        else:
-            return 'no settings sql provided'
-    else:
+    if not validate['status']:
         return validate['message']
+    if 'settings_sql' in request.files:
+        db_sql = request.files['settings_sql']
+        sql_data = db_sql.read()
+        os.remove(settings_db)
+        sqlite3_cmd = subprocess.Popen(['sqlite3', settings_db], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        sqlite3_cmd.communicate(input=sql_data)
+        reload_gunicorn()
+        return "restore via sql successful"
+    else:
+        return 'no settings sql provided'
 
 
 def reload_gunicorn():
     for proc in psutil.process_iter():
-        if proc.name == 'gunicorn':
+        if proc.name() == 'gunicorn':
             os.kill(proc.pid, signal.SIGHUP)
             break
 
