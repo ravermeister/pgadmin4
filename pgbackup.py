@@ -97,7 +97,7 @@ def validate_password(params):
         retval['message'] = 'Environment Variable PGBACKUP_PASSWORD is not set'
         return retval
     if 'password' not in params:
-        retval['message'] = 'parameter PASSWORD is not set'
+        retval['message'] = 'parameter password is not set'
         return retval
 
     retval['status'] = params['password'] == os.environ['PGBACKUP_PASSWORD']
