@@ -9,9 +9,10 @@ stages:
     - apk add --update curl && rm -rf /var/cache/apk/*
   after_script:
     - curl -sX POST https://hooks.microbadger.com/images/ravermeister/pgadmin4/4e8KBc0HS3NVw_vwBu7ReIgW-ro=
-  image: docker:stable
+  image: docker
   services:
-    - docker:stable-dind
+    - name: docker:dind
+      command: ["--experimental"]
   variables:
     DOCKER_DRIVER: overlay2
   tags:
