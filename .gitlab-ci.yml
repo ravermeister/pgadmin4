@@ -22,7 +22,7 @@ build-release:
   extends: .imgjob
   script:
     - >
-      docker build --pull --no-cache --force-rm --compress
+      docker build --pull --no-cache --force-rm --compress --squash
       -t "$CI_IMAGE:$PGADMIN_VERSION" --build-arg PGADMIN_VERSION .
     - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
     - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:latest"
@@ -38,7 +38,7 @@ build-develop:
   extends: .imgjob
   script:
     - >
-      docker build --pull --no-cache --force-rm --compress
+      docker build --pull --no-cache --force-rm --compress --squash
       -t "$CI_IMAGE:$PGADMIN_VERSION" --build-arg PGADMIN_VERSION .
     - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
     - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
