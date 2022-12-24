@@ -24,10 +24,11 @@ RUN apt-get -yq update \
  && rm -rf /var/lib/apt/lists/* \
  # Remove MOTD
  && rm -rf /etc/update-motd.d /etc/motd /etc/motd.dynamic \
- && ln -fs /dev/null /run/motd.dynamic
-
-
-
+ && ln -fs /dev/null /run/motd.dynamic \
+ # Remove generated SSH Keys
+ && rm /etc/ssh/ssh_host_ecdsa_key /etc/ssh/ssh_host_ecdsa_key.pub \
+    /etc/ssh/ssh_host_ed25519_key /etc/ssh/ssh_host_ed25519_key.pub \
+    /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub >/dev/null 2>&1
 
 RUN mkdir /usr/local/share/pgadmin /var/lib/pgadmin /var/log/pgadmin &&\
  addgroup --system pgadmin &&\
