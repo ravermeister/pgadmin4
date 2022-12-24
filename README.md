@@ -1,6 +1,6 @@
 # PGAdmin4 Dockerfile from the Python Wheel package
 PGAdmin4 is availble in Dockerhub:
- - [ravermeister/pgadmin4](https://hub.docker.com/repository/docker/ravermeister/pgadmin4)
+ - [ravermeister/pgadmin4](https://hub.docker.com/r/ravermeister/pgadmin4)
 
 This is a custom Dockerfile build from the official Postgresql [Python wheel](https://www.pgadmin.org/download/pgadmin-4-python/) package.
 It uses [gunicorn](https://gunicorn.org/) to start the Instance and listens on `0.0.0.0:8080`. To start the Container
