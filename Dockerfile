@@ -58,7 +58,8 @@ RUN apt-get -yq update \
 WORKDIR /usr/local/share/pgadmin
 
 ## install pgadmin
-FROM base_image AS pgadmin_image
+FROM scratch AS pgadmin_image
+COPY --from=base_image / /
 USER pgadmin
 RUN python3 -m venv pg_venv \
  && source pg_venv/bin/activate \
