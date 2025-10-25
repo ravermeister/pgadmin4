@@ -3,7 +3,7 @@ ARG PLATFORM=linux/amd64
 
 FROM python:$PYTHON_VERSION-slim \
   --platflorm $PLATFORM \
-  As base_image
+  AS base_image
 LABEL maintainer="Jonny Rimkus <jonny@rimkus.it>"
 
 ARG PGADMIN_VERSION=8.0

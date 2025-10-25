@@ -12,14 +12,14 @@ variables:
     - apk add --update curl && rm -rf /var/cache/apk/*
   script:
     - |
-      docker build --pull --no-cache --force-rm \
-        --compress --squash \
+      docker build --pull --no-cache \
+        --force-rm --compress \
         --build-arg PGADMIN_VERSION \
         --build-arg PYTHON_VERSION \
         -t "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG" \
         .
       docker tag "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG" "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
-
+      docker push "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG"
   image: docker
   services:
     - name: docker:dind
