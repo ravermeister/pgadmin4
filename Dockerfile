@@ -64,6 +64,8 @@ WORKDIR /usr/local/share/pgadmin
 ## install pgadmin
 FROM scratch AS pgadmin_image
 COPY --from=base_image / /
+ARG PYTHON_VERSION
+ARG PGADMIN_DOWNLOAD_URL
 USER pgadmin
 RUN python3 -m venv pg_venv \
  && source pg_venv/bin/activate \
