@@ -32,9 +32,9 @@ RUN apt-get -yq update \
  # Remove generated SSH Keys
  && rm /etc/ssh/ssh_host_ecdsa_key /etc/ssh/ssh_host_ecdsa_key.pub \
     /etc/ssh/ssh_host_ed25519_key /etc/ssh/ssh_host_ed25519_key.pub \
-    /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub >/dev/null 2>&1
-
-RUN mkdir /usr/local/share/pgadmin \
+    /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub >/dev/null 2>&1 \
+ # create pgadmin user
+ && mkdir /usr/local/share/pgadmin \
  /var/lib/pgadmin /var/log/pgadmin \
  && addgroup --system pgadmin \
  && adduser pgadmin \
@@ -42,9 +42,9 @@ RUN mkdir /usr/local/share/pgadmin \
  --shell /bin/bash \
  --ingroup pgadmin \
  --no-create-home \
- --system
-
-RUN chown -R pgadmin:pgadmin \
+ --system \
+ # set permissions for pgadmin user folders
+ && chown -R pgadmin:pgadmin \
   /usr/local/share/pgadmin \
   /var/lib/pgadmin \
   /var/log/pgadmin \
@@ -53,6 +53,7 @@ RUN chown -R pgadmin:pgadmin \
 
 WORKDIR /usr/local/share/pgadmin
 
+FROM base_image AS pgadmin_image
 USER pgadmin
 RUN python3 -m venv pg_venv &&\
  source pg_venv/bin/activate &&\
@@ -66,7 +67,7 @@ COPY entrypoint.sh entrypoint.sh
 RUN chown pgadmin:pgadmin pg_venv/lib/python$PYTHON_VERSION/site-packages/pgadmin4/config_local.py entrypoint.sh &&\
  chmod +x entrypoint.sh
 
-FROM base_image
+FROM pgadmin_image
 USER pgadmin
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/share/pgadmin/entrypoint.sh"]
