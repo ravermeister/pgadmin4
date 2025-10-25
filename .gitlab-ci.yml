@@ -41,6 +41,19 @@ build-amd64:
   tags:
     - gitlab-org-docker
 
+build-arm32:
+  stage: build
+  extends: .imgjob
+  variables:
+    PYTHON_VERSION: 3.13
+    PLATFORM: linux/arm/v7
+    CI_TAG: arm32
+  only:
+    - main
+  tags:
+    - arm64
+    - docker
+
 build-arm64:
   stage: build
   extends: .imgjob
@@ -69,10 +82,12 @@ create-manifest:
       docker manifest create \
         "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION" \
         "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_AMD64" \
+        "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM32" \
         "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM64"
       docker manifest create \
         "$CI_REGISTRY_IMAGE:latest" \
         "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_AMD64" \
+        "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM32" \
         "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM64"
       docker manifest push "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
       docker manifest push "$CI_REGISTRY_IMAGE:latest"
