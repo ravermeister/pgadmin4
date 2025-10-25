@@ -1,10 +1,10 @@
 ARG PYTHON_VERSION=3.11
 ARG PLATFORM=linux/amd64
 
+## create base image
 FROM --platform=$PLATFORM \
   python:$PYTHON_VERSION-slim \
   AS base_image
-LABEL maintainer="Jonny Rimkus <jonny@rimkus.it>"
 
 ARG PGADMIN_VERSION=8.0
 
@@ -53,6 +53,7 @@ RUN apt-get -yq update \
 
 WORKDIR /usr/local/share/pgadmin
 
+## instaall pgadmin
 FROM base_image AS pgadmin_image
 USER pgadmin
 RUN python3 -m venv pg_venv &&\
@@ -60,14 +61,16 @@ RUN python3 -m venv pg_venv &&\
  python3 -m pip install --upgrade pip &&\
  pip install wheel gunicorn flask psutil &&\
  pip install "$PGADMIN_DOWNLOAD_URL"
-
 USER root
 COPY config_local.py pg_venv/lib/python$PYTHON_VERSION/site-packages/pgadmin4/
 COPY entrypoint.sh entrypoint.sh
 RUN chown pgadmin:pgadmin pg_venv/lib/python$PYTHON_VERSION/site-packages/pgadmin4/config_local.py entrypoint.sh &&\
  chmod +x entrypoint.sh
 
-FROM pgadmin_image
+## final image with squashed layers
+FROM scratch 
+LABEL maintainer="Jonny Rimkus <jonny@rimkus.it>"
+COPY --from=pgadmin_image / /
 USER pgadmin
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/share/pgadmin/entrypoint.sh"]
