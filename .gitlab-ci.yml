@@ -55,12 +55,12 @@ build-arm64:
     - docker
 
 
-create_manifest:
+create-manifest:
   stage: build
   extends: .imgjob
   needs:
-    - build_arm64
-    - build_amd64
+    - build-arm64
+    - build-amd64
   variables:
     CI_TAG_ARM64: arm64
     CI_TAG_AMD64: amd64
