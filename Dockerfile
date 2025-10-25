@@ -2,7 +2,7 @@ ARG PYTHON_VERSION=3.11
 ARG PLATFORM=linux/amd64
 
 FROM python:$PYTHON_VERSION-slim \
-  --platflorm $PLATFORM \
+  --platflorm=$PLATFORM \
   AS base_image
 LABEL maintainer="Jonny Rimkus <jonny@rimkus.it>"
 
