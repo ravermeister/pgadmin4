@@ -51,10 +51,14 @@ RUN apt-get -yq update \
   /var/lib/pgadmin \
   /var/log/pgadmin \
  && chmod u+rwx /usr/local/share/pgadmin \
-  /var/lib/pgadmin /var/log/pgadmin
+  /var/lib/pgadmin /var/log/pgadmin \
  # clean tmp and log 
- && rm -rf /tmp/* >/dev/null 2>&1 \
- && rm -rf /var/log/* >/dev/null 2&1
+ && find /tmp -type d -type f \
+  -exec rm -rf {} \; \
+ && find /var/log -type d -type f \
+  -not -path /var/log/pgadmin \
+  -exec rm -rf {} \;
+
 WORKDIR /usr/local/share/pgadmin
 
 ## install pgadmin
