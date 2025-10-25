@@ -19,9 +19,11 @@ ENV TERM="xterm"
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get -yq update \
- && apt-get -y install apt-utils \
- && apt-get -y install ssh gcc \
- postgresql-client python3-dev libkrb5-dev sqlite3 curl \
+ && apt-get -yq --no-install-recommends upgrade \
+ && apt-get -yq --no-install-recommends install \
+  apt-utils install ssh gcc \
+  postgresql-client python3-dev libkrb5-dev sqlite3 \
+  curl \
  # postgresql-server-dev-all
  # clean apt cache
  && apt-get clean \
@@ -48,19 +50,23 @@ RUN apt-get -yq update \
   /usr/local/share/pgadmin \
   /var/lib/pgadmin \
   /var/log/pgadmin \
-  && chmod u+rwx /usr/local/share/pgadmin \
+ && chmod u+rwx /usr/local/share/pgadmin \
   /var/lib/pgadmin /var/log/pgadmin
-
+ # clean tmp and log 
+ && rm -rf /tmp/* >/dev/null 2>&1 \
+ && rm -rf /var/log/* >/dev/null 2&1
 WORKDIR /usr/local/share/pgadmin
 
-## instaall pgadmin
+## install pgadmin
 FROM base_image AS pgadmin_image
 USER pgadmin
-RUN python3 -m venv pg_venv &&\
- source pg_venv/bin/activate &&\
- python3 -m pip install --upgrade pip &&\
- pip install wheel gunicorn flask psutil &&\
- pip install "$PGADMIN_DOWNLOAD_URL"
+RUN python3 -m venv pg_venv \
+ && source pg_venv/bin/activate \
+ && python3 -m pip install --upgrade pip \
+ && pip install \
+  wheel gunicorn flask psutil "$PGADMIN_DOWNLOAD_URL" \
+ # clean pip cache
+ && pip cache purge
 USER root
 COPY config_local.py pg_venv/lib/python$PYTHON_VERSION/site-packages/pgadmin4/
 COPY entrypoint.sh entrypoint.sh
