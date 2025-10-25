@@ -1,15 +1,25 @@
 stages:
   - build
 
+variables:
+  PYTHON_VERSION: 3.13
+  PGADMIN_VERSION: 9.9
+
 .imgjob:
   before_script:
     - echo -n "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY_SERVER"
     - export CI_IMAGE="ravermeister/pgadmin4"
-    - printf "Loading version environment variables from %s file\n" "$ENV_FILE"
-    - export $(grep -v '^[[:space:]]*#' ${ENV_FILE} | xargs)
     - apk add --update curl && rm -rf /var/cache/apk/*
-  after_script:
-    - curl -sX POST https://hooks.microbadger.com/images/ravermeister/pgadmin4/4e8KBc0HS3NVw_vwBu7ReIgW-ro=
+  script:
+    - |
+      docker build --pull --no-cache --force-rm \
+        --compress --squash \
+        --build-arg PGADMIN_VERSION \
+        --build-arg PYTHON_VERSION \
+        -t "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG" \
+        .
+      docker tag "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG" "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
+
   image: docker
   services:
     - name: docker:dind
@@ -19,23 +29,51 @@ stages:
   tags:
     - gitlab-org-docker
 
-build-release:
+build-amd64:
   stage: build
   extends: .imgjob
   variables:
-    ENV_FILE: .env
+    PYTHON_VERSION: 3.13
+    PLATFORM: linux/amd64
+    CI_TAG: amd64
+  only:
+    - main
+  tags:
+    - gitlab-org-docker
+
+build-arm64:
+  stage: build
+  extends: .imgjob
+  variables:
+    PYTHON_VERSION: 3.13
+    PLATFORM: linux/arm64/v8
+    CI_TAG: arm64
+  only:
+    - main
+  tags:
+    - arm64
+    - docker
+
+
+create_manifest:
+  needs:
+    - build_arm64
+    - build_amd64
+  variables:
+    CI_TAG_ARM64: arm64
+    CI_TAG_AMD64: amd64
   script:
     - |
-      docker build --pull --no-cache --force-rm \
-        --compress --squash \
-        --build-arg PGADMIN_VERSION \
-        --build-arg PYTHON_VERSION \
-        -t "$CI_IMAGE:$PGADMIN_VERSION" \
-        .
-    - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
-    - docker tag "$CI_IMAGE:$PGADMIN_VERSION" "$CI_REGISTRY_IMAGE:latest"
-    - docker push "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
-    - docker push "$CI_REGISTRY_IMAGE:latest"
+      docker manifest create \
+        "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION" \
+        "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_AMD64" \
+        "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM64"
+      docker manifest create \
+        "$CI_REGISTRY_IMAGE:latest" \
+        "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_AMD64" \
+        "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM64"
+      docker manifest push "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
+      docker manifest push "$CI_REGISTRY_IMAGE:latest"
   only:
     - main
 

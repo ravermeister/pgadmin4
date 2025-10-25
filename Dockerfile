@@ -1,5 +1,9 @@
-ARG PYTHON_VERSION=3.13
-FROM python:$PYTHON_VERSION-slim
+ARG PYTHON_VERSION=3.11
+ARG PLATFORM=linux/amd64
+
+FROM python:$PYTHON_VERSION-slim \
+  --platflorm $PLATFORM \
+  As base_image
 LABEL maintainer="Jonny Rimkus <jonny@rimkus.it>"
 
 ARG PGADMIN_VERSION=8.0
@@ -57,6 +61,7 @@ COPY entrypoint.sh entrypoint.sh
 RUN chown pgadmin:pgadmin pg_venv/lib/python$PYTHON_VERSION/site-packages/pgadmin4/config_local.py entrypoint.sh &&\
  chmod +x entrypoint.sh
 
+FROM base_image
 USER pgadmin
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/share/pgadmin/entrypoint.sh"]
