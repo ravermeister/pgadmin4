@@ -53,9 +53,9 @@ RUN apt-get -yq update \
  && chmod u+rwx /usr/local/share/pgadmin \
   /var/lib/pgadmin /var/log/pgadmin \
  # clean tmp and log 
- && find /tmp -type d -type f \
+ && find /tmp -type d,f,l \
   -exec rm -rf {} \; \
- && find /var/log -type d -type f \
+ && find /var/log -type d,f,l \
   -not -path /var/log/pgadmin \
   -exec rm -rf {} \;
 
