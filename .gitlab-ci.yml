@@ -83,12 +83,12 @@ create-manifest:
       docker manifest create \
         "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION" \
         "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_AMD64" \
-        "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM32" \
+#        "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM32" \
         "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM64"
       docker manifest create \
         "$CI_REGISTRY_IMAGE:latest" \
         "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_AMD64" \
-        "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM32" \
+#        "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM32" \
         "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG_ARM64"
       docker manifest push "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"
       docker manifest push "$CI_REGISTRY_IMAGE:latest"
