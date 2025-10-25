@@ -72,10 +72,12 @@ create-manifest:
   stage: build
   extends: .imgjob
   needs:
+    - build-arm32
     - build-arm64
     - build-amd64
   variables:
     CI_TAG_ARM64: arm64
+    CI_TAG_ARM32: arm32
     CI_TAG_AMD64: amd64
   script:
     - |
