@@ -12,12 +12,13 @@ ENV TERM="xterm"
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get -yq update \
- && apt-get -y install apt-utils \
- && apt-get -y install ssh gcc \
- postgresql-client python3-dev libkrb5-dev sqlite3 curl \
+ && apt-get -yq install apt-utils \
+ && apt-get -yq install --no-install-recommends \
+  ssh gcc postgresql-client python3-dev libkrb5-dev \
+ sqlite3 curl \
  # postgresql-server-dev-all
  # clean apt cache
- && apt-get clean \
+ && apt-get -yq clean \
  && rm -rf /var/lib/apt/lists/* \
  # Remove MOTD
  && rm -rf /etc/update-motd.d /etc/motd /etc/motd.dynamic \
