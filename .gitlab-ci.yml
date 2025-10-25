@@ -40,18 +40,18 @@ build-amd64:
   tags:
     - gitlab-org-docker
 
-build-arm32:
-  stage: build
-  extends: .imgjob
-  variables:
-    PYTHON_VERSION: 3.13
-    PLATFORM: linux/arm/v7
-    CI_TAG: arm32
-  only:
-    - main
-  tags:
-    - arm64
-    - docker
+#build-arm32:
+#  stage: build
+#  extends: .imgjob
+#  variables:
+#    PYTHON_VERSION: 3.13
+#    PLATFORM: linux/arm/v7
+#    CI_TAG: arm32
+#  only:
+#    - main
+#  tags:
+#    - arm64
+#    - docker
 
 build-arm64:
   stage: build
@@ -71,7 +71,7 @@ create-manifest:
   stage: build
   extends: .imgjob
   needs:
-    - build-arm32
+#    - build-arm32
     - build-arm64
     - build-amd64
   variables:
