@@ -66,6 +66,8 @@ RUN chown pgadmin:pgadmin pg_venv/lib/python$PYTHON_VERSION/site-packages/pgadmi
 FROM scratch
 COPY --from=base_image / /
 LABEL maintainer="Jonny Rimkus <jonny@rimkus.it>"
+ARG PYTHON_VERSION
+ENV PYTHON_VERSION="$PYTHON_VERSION"
 ENV PGADMIN_SETUP_EMAIL="info@rimkus.it"
 ENV PGADMIN_SETUP_PASSWORD="changeme"
 ENV SMTP_HOST=""
