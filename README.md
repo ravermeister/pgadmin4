@@ -7,11 +7,10 @@ It uses [gunicorn](https://gunicorn.org/) to start the Instance and listens on `
 (the environment variables are optional) execute:
 ```bash
 docker pull ravermeister/pgadmin4
-docker run -p 8080:8080 -p 8081:8081 \
+docker run -p 8080:8080 \
 -e SMTP_HOST="localhost" \
 -e SMTP_PORT=25 \
 -e SMTP_MAIL_SENDER="no-reply@localhost" \
--e PGBACKUP_PASSWORD="backup_restore_password" \
 ravermeister/pgadmin4
 ```
 Then go to URL http://localhost:8080, the default admin user is:
