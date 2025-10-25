@@ -20,7 +20,7 @@ SHELL ["/bin/bash", "-c"]
 
 RUN apt-get -yq update \
  && apt-get -y install apt-utils \
- && apt-get -y install ssh gcc \
+ && apt-get -y install ssh gcc
  postgresql-client python3-dev libkrb5-dev sqlite3 curl \
  # postgresql-server-dev-all
  # clean apt cache
@@ -34,17 +34,22 @@ RUN apt-get -yq update \
     /etc/ssh/ssh_host_ed25519_key /etc/ssh/ssh_host_ed25519_key.pub \
     /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub >/dev/null 2>&1
 
-RUN mkdir /usr/local/share/pgadmin /var/lib/pgadmin /var/log/pgadmin &&\
- addgroup --system pgadmin &&\
- adduser pgadmin\
- --home /usr/local/share/pgadmin\
- --shell /bin/bash\
- --ingroup pgadmin\
- --no-create-home\
+RUN mkdir /usr/local/share/pgadmin \
+ /var/lib/pgadmin /var/log/pgadmin \
+ && addgroup --system pgadmin \
+ && adduser pgadmin \
+ --home /usr/local/share/pgadmin \
+ --shell /bin/bash \
+ --ingroup pgadmin \
+ --no-create-home \
  --system
 
-RUN chown -R pgadmin:pgadmin /usr/local/share/pgadmin /var/lib/pgadmin /var/log/pgadmin &&\
- chmod u+rwx /usr/local/share/pgadmin /var/lib/pgadmin /var/log/pgadmin
+RUN chown -R pgadmin:pgadmin \
+  /usr/local/share/pgadmin \
+  /var/lib/pgadmin \
+  /var/log/pgadmin \
+  && chmod u+rwx /usr/local/share/pgadmin \
+  /var/lib/pgadmin /var/log/pgadmin
 
 WORKDIR /usr/local/share/pgadmin
 

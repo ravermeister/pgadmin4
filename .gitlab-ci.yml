@@ -4,18 +4,17 @@ stages:
 variables:
   PYTHON_VERSION: 3.13
   PGADMIN_VERSION: 9.9
-
 .imgjob:
   before_script:
     - echo -n "$CI_REGISTRY_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY_SERVER"
     - export CI_IMAGE="ravermeister/pgadmin4"
-    - apk add --update curl && rm -rf /var/cache/apk/*
   script:
     - |
       docker build --pull --no-cache \
         --force-rm --compress \
-        --build-arg PGADMIN_VERSION \
-        --build-arg PYTHON_VERSION \
+        --build-arg PGADMIN_VERSION=$PGADMIN_VERSION \
+        --build-arg PYTHON_VERSION=$PYTHON_VERSION \
+        --build-arg PLATFORM=$PLATFORM \
         -t "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG" \
         .
       docker tag "$CI_IMAGE:$PGADMIN_VERSION-$CI_TAG" "$CI_REGISTRY_IMAGE:$PGADMIN_VERSION"

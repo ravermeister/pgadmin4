@@ -27,7 +27,7 @@ DEFAULT_BINARY_PATHS = {
     "pg-10": "",
     "pg-11": "",
     "pg-12": "",
-    "pg-13": "/usr/lib/postgresql/13/bin/",
+    "pg-13": "",
     "pg-14": "",
     "pg-15": "",
     "pg-16": "",
