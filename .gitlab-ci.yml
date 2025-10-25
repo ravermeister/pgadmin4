@@ -10,7 +10,6 @@ variables:
     - export CI_IMAGE="ravermeister/pgadmin4"
   script:
     - |
-      echo ">>$PLATFORM"
       docker build --pull --no-cache \
         --force-rm --compress \
         --build-arg PGADMIN_VERSION=$PGADMIN_VERSION \
