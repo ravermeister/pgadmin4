@@ -26,24 +26,24 @@ RUN apt-get -yq update \
  # Remove generated SSH Keys
  && rm /etc/ssh/ssh_host_ecdsa_key /etc/ssh/ssh_host_ecdsa_key.pub \
     /etc/ssh/ssh_host_ed25519_key /etc/ssh/ssh_host_ed25519_key.pub \
-    /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub >/dev/null 2>&1
-
-RUN mkdir /usr/local/share/pgadmin \
- /var/lib/pgadmin /var/log/pgadmin \
+    /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub >/dev/null 2>&1 \
+ # create pgadmin user
+ && mkdir /usr/local/share/pgadmin \
+  /var/lib/pgadmin /var/log/pgadmin \
  && addgroup --system pgadmin \
  && adduser pgadmin \
  --home /usr/local/share/pgadmin \
  --shell /bin/bash \
  --ingroup pgadmin \
  --no-create-home \
- --system
-
-RUN chown -R pgadmin:pgadmin \
-  /usr/local/share/pgadmin \
-  /var/lib/pgadmin \
-  /var/log/pgadmin \
+ --system \
+ # set permissions for pgadmin user folders
+  && chown -R pgadmin:pgadmin \
+   /usr/local/share/pgadmin \
+   /var/lib/pgadmin \
+   /var/log/pgadmin \
   && chmod u+rwx /usr/local/share/pgadmin \
-  /var/lib/pgadmin /var/log/pgadmin
+   /var/lib/pgadmin /var/log/pgadmin
 
 WORKDIR /usr/local/share/pgadmin
 USER pgadmin
